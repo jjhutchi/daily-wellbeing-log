@@ -1,0 +1,77 @@
+---
+title: "Daily Wellbeing Dashboard"
+author: "Jordan Hutchings"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+ flexdashboard::flex_dashboard:
+   orientation: rows
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      warnings = FALSE, 
+                      messages = FALSE)
+
+pacman::p_load(googlesheets4, ggplot2, dplyr)
+source("../secrets.R")
+
+# ggplot theme
+theme_set(
+  theme_bw() + 
+  theme(
+    panel.grid.major = element_blank(), 
+    # axis.ticks.y = element_blank(),
+    plot.title=element_text(size = 16, face="bold"),
+    plot.title.position = "plot",
+    plot.subtitle=element_text(face="italic", size=12, margin=margin(b=12)),
+    plot.caption=element_text(size=8, margin=margin(t=8), color="#7a7d7e"), 
+    legend.position = "bottom"
+    )
+)
+
+```
+
+# Viz
+
+```{r, warning=FALSE, message=FALSE, include=FALSE}
+data = googlesheets4::read_sheet(GOOGLE_SHEET)
+
+```
+
+## Row {data-height="650"}
+
+### Plot of overall wellbeing
+
+```{r, echo=FALSE}
+data |> 
+  mutate(date = as.Date(Timestamp), 
+           caffine_intake = substr(wellbeing_score, 1, 2)) |>
+  ggplot(aes(x = date, y = wellbeing_score)) + 
+  geom_point()
+```
+
+## Row {data-height="350"}
+
+### Caffine Consumption
+
+```{r, echo=FALSE}
+data |> 
+    mutate(date = as.Date(Timestamp), 
+           caffine_intake = substr(caffine_intake, 1, 2)) |>
+    ggplot(aes(x = date, y = caffine_intake)) + 
+    geom_point() 
+```
+
+### Overall Perceived Sleep
+
+```{r, echo=FALSE}
+data |> 
+    mutate(date = as.Date(Timestamp), 
+           sleep_score = substr(sleep_score, 1, 2)) |>
+    ggplot(aes(x = date, y = sleep_score)) + 
+    geom_point() 
+```
+
+# Information
+
+I created this dashboard using the `flexdashboard` library in R Markdown. This dashboard is tracking my personal wellbeing. My motivation for this project came prior to beginning my PhD and wanting to be aware of how my mental state changed buring this process.

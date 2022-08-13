@@ -19,3 +19,9 @@ cronR::cron_add(command = cron_rscript("send-link.R", log_append = TRUE, log_tim
                 description = "Send daily wellbeing log link to iPhone", 
                 tags = "wellbeing-log")
 ```
+
+## Analysis 
+
+I use [flexdashboard](https://pkgs.rstudio.com/flexdashboard/index.html) to make 
+a dashboard of the results in R Markdown. I prefer this method for its straight 
+to the point visualizations.
