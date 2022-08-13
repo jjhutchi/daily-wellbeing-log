@@ -40,3 +40,6 @@ vignettes/*.pdf
 
 # keys
 secrets.R
+
+# html dashboards
+**.html
