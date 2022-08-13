@@ -28,14 +28,12 @@ theme_set(
     legend.position = "bottom"
     )
 )
-
 ```
 
 # Viz
 
 ```{r, warning=FALSE, message=FALSE, include=FALSE}
 data = googlesheets4::read_sheet(GOOGLE_SHEET)
-
 ```
 
 ## Row {data-height="650"}

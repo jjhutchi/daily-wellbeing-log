@@ -43,3 +43,6 @@ secrets.R
 
 # html dashboards
 **.html
+
+# cron log
+**.log
