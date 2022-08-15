@@ -46,3 +46,9 @@ secrets.R
 
 # cron log
 **.log
+
+# R project
+**.Rprof.user
+
+# DS_Store
+**.DS_Store

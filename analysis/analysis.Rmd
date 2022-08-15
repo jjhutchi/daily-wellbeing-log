@@ -83,12 +83,7 @@ I followed these four steps to create my wellbeing tracker:
     * This can be scheduled using `cronR::cron_add()`, or with the RStudio cronR addin "Schedule R Scripts on Linux/Unix". 
         * cronR is Linux/Unix based. For Windows machines, look to Task Scheduler or other automation processes. 
 
-**1. Creating a Google Form**
-You can find [Google Forms here](https://www.google.com/forms/about/). 
-This step is as simple as making one question per insight you wish to 
-track with your wellbeing tracker. 
-
-For more information, you can my Daily Wellbeing repository [here - TBD](). 
+For more information, you can my Daily Wellbeing repository [here](https://github.com/jjhutchi/daily-wellbeing-log). 
 
 # Viz
 
@@ -131,7 +126,3 @@ data |>
     ggplot(aes(x = date, y = sleep_score)) +
     geom_point()
 ```
-
-# Information
-
-I created this dashboard using the `flexdashboard` library in R Markdown. This dashboard is tracking my personal wellbeing. My motivation for this project came prior to beginning my PhD and wanting to be aware of how my mental state changed buring this process.
