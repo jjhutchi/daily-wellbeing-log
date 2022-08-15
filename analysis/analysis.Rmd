@@ -1,9 +1,10 @@
 ---
 title: "Daily Wellbeing Dashboard"
-author: "Jordan Hutchings"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+# author: "Jordan Hutchings"
+# date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
  flexdashboard::flex_dashboard:
+   css: styles.css
    orientation: rows
 ---
 
@@ -28,23 +29,84 @@ theme_set(
     legend.position = "bottom"
     )
 )
+
+# toggle the eval argument of code chunks, to preview blog post w/o code
+# Use: ```{r, eval = RUN_CODE}
+RUN_CODE = FALSE
 ```
+
+# Blog Post
+
+I had some down time before beginning the summer math camp for my 
+PhD, and decided it would be a good idea to begin tracking my 
+personal wellbeing throughout my PhD. 
+
+There were a couple key factors I wanted to include in my tracking progress: 
+
+1. **Ease of use** - I wanted an application that I would be able to do on days where I didn't feel like doing anything. I decided to use `cronR` to automate a script that would send the survey link to my phone each morning. Paired with `pushoverr`, I now receive a push notification each morning that opens a Google Form containing one page of questions on my mental wellbeing. The entire process start to finish takes less than a minute to complete. 
+
+2. **Configurable** - I want to create a question bank of information specific to myself which I would like to track. For this reason, I decided to avoid any pre-made apps. Google Forms allowed me to make my own survey to track the questions I am most interested in. Additionally, the google form automatically saves all entered information into a Google Sheet, which can easily be read into R for further analysis. 
+
+3. **Reproducible** - I want to be able to make the information easy to share with others. The code base for the log is written in R Markdown, with the only external resource being Google Forms. This makes the project very easy for others to adopt. 
+
+
+**Creating the tracker**
+
+I followed these four steps to create my wellbeing tracker: 
+
+1. Create a Google Form with the information you want to track. 
+    * Collect the Google Form URL, this will be the URL we embed in our push notification. 
+    * In results, click "View in Sheets", collect this URL as well, as it will be where we collect the response data. 
+2. Set up a Pushover API to receive push notifications on your phone. 
+    * install the `pushoverr` R library. 
+    * install the Pushover app on your phone. 
+    * create a Pushover application at [pushover.net](https://pushover.net/). This will provide a `USER_KEY`, and `API_KEY` needed for sending push notifications from R. 
+    * For more info setting up Pushover, see Brian Connelley's blog post [R Phone Home: Notifications with pushoverr](https://bconnelly.net/posts/r-phone-home/).
+3. Write R code to send push notifications. 
+    
+    ```{r, eval = FALSE}
+    # file name: send-push.R
+    
+    USER_KEY = "YYYYY"
+    APP_KEY = "ZZZZZ"
+    GOOGLE_FORM_URL = "XXXXX"
+    
+    pushoverr::pushover(message = "Enter your daily wellbeing information", 
+                        user = USER_KEY, 
+                        app = APP_KEY, 
+                        url = GOOGLE_FORM_URL, 
+                        url_title = "Wellbeing Link")
+    
+    ```
+4. Schedule the R code to run daily.
+    * I used `cronR` to schedule the send-push.R to run daily at 8:15am. 
+    * This can be scheduled using `cronR::cron_add()`, or with the RStudio cronR addin "Schedule R Scripts on Linux/Unix". 
+        * cronR is Linux/Unix based. For Windows machines, look to Task Scheduler or other automation processes. 
+
+**1. Creating a Google Form**
+You can find [Google Forms here](https://www.google.com/forms/about/). 
+This step is as simple as making one question per insight you wish to 
+track with your wellbeing tracker. 
+
+For more information, you can my Daily Wellbeing repository [here - TBD](). 
 
 # Viz
 
-```{r, warning=FALSE, message=FALSE, include=FALSE}
+```{r, warning=FALSE, message=FALSE, include=FALSE, eval=RUN_CODE}
 data = googlesheets4::read_sheet(GOOGLE_SHEET)
+data |> 
+  head()
 ```
 
-## Row {data-height="650"}
+## Row {data-height="600"}
 
 ### Plot of overall wellbeing
 
-```{r, echo=FALSE}
-data |> 
-  mutate(date = as.Date(Timestamp), 
+```{r, echo=FALSE, eval=RUN_CODE}
+data |>
+  mutate(date = as.Date(Timestamp),
            caffine_intake = substr(wellbeing_score, 1, 2)) |>
-  ggplot(aes(x = date, y = wellbeing_score)) + 
+  ggplot(aes(x = date, y = wellbeing_score)) +
   geom_point()
 ```
 
@@ -52,22 +114,22 @@ data |>
 
 ### Caffine Consumption
 
-```{r, echo=FALSE}
-data |> 
-    mutate(date = as.Date(Timestamp), 
+```{r, echo=FALSE, eval=RUN_CODE}
+data |>
+    mutate(date = as.Date(Timestamp),
            caffine_intake = substr(caffine_intake, 1, 2)) |>
-    ggplot(aes(x = date, y = caffine_intake)) + 
-    geom_point() 
+    ggplot(aes(x = date, y = caffine_intake)) +
+    geom_point()
 ```
 
 ### Overall Perceived Sleep
 
-```{r, echo=FALSE}
-data |> 
-    mutate(date = as.Date(Timestamp), 
+```{r, echo=FALSE, eval=RUN_CODE}
+data |>
+    mutate(date = as.Date(Timestamp),
            sleep_score = substr(sleep_score, 1, 2)) |>
-    ggplot(aes(x = date, y = sleep_score)) + 
-    geom_point() 
+    ggplot(aes(x = date, y = sleep_score)) +
+    geom_point()
 ```
 
 # Information
